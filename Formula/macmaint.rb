@@ -10,7 +10,10 @@ class Macmaint < Formula
   depends_on "python@3.12"
 
   def install
-    virtualenv_install_with_resources
+    virtualenv_create(libexec, "python3.12")
+    system libexec/"bin/pip", "install", "--upgrade", "pip", "setuptools", "wheel"
+    system libexec/"bin/pip", "install", "."
+    bin.install_symlink libexec/"bin/macmaint"
   end
 
   def caveats
