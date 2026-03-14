@@ -43,10 +43,10 @@ class Macmaint < Formula
         1. Add your OpenAI API key to ~/.macmaint/.env:
              OPENAI_API_KEY=sk-...
         2. Run 'macmaint init' to set up your configuration (first-time setup)
-        3. Launch the interactive AI assistant:
-             macmaint start
+        3. Launch the conversational AI REPL:
+             macmaint chat
 
-      Key commands inside the assistant:
+      Key commands inside the REPL:
         help      — show available actions
         status    — current session info
         history   — recent conversation
@@ -58,6 +58,6 @@ class Macmaint < Formula
 
   test do
     assert_match "Usage:", shell_output("#{bin}/macmaint --help")
-    assert_match "start", shell_output("#{bin}/macmaint --help")
+    assert_match "chat", shell_output("#{bin}/macmaint --help")
   end
 end
