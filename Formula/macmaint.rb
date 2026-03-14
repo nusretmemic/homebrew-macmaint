@@ -1,46 +1,64 @@
 class Macmaint < Formula
   include Language::Python::Virtualenv
 
-  desc "AI-powered CLI maintenance agent for macOS"
+  desc "AI-powered conversational CLI maintenance agent for macOS"
   homepage "https://github.com/nusretmemic/macmaint"
+
+  # Stable release — update url and sha256 when v0.4.0 tag is cut
   url "https://github.com/nusretmemic/macmaint/archive/refs/tags/v0.3.0.tar.gz"
   sha256 "f1f493a9d5516e57095f9c11c019af19344e5e49686b1ce979b9617acefaebd7"
   license "MIT"
   version "0.3.0"
 
+  # Development HEAD — install with: brew install --HEAD macmaint
+  head "https://github.com/nusretmemic/macmaint.git", branch: "main"
+
   depends_on "python@3.12"
 
   def install
-    # Get python path
     python = Formula["python@3.12"].opt_bin/"python3.12"
-    
-    # Create virtualenv with pip
+
+    # Create virtualenv
     system python, "-m", "venv", libexec
-    
+
     # Install dependencies
     system libexec/"bin/pip", "install", "--upgrade", "pip"
-    system libexec/"bin/pip", "install", "click>=8.1.0", "rich>=13.0.0", 
-           "psutil>=5.9.0", "openai>=1.0.0", "pydantic>=2.0.0", 
-           "pyyaml>=6.0.0", "python-dotenv>=1.0.0"
-    
-    # Install the package
+    system libexec/"bin/pip", "install",
+           "click>=8.1.0",
+           "rich>=13.0.0",
+           "psutil>=5.9.0",
+           "openai>=1.0.0",
+           "pydantic>=2.0.0",
+           "pyyaml>=6.0.0",
+           "python-dotenv>=1.0.0"
+
+    # Install the package itself (no deps — already installed above)
     system libexec/"bin/pip", "install", "--no-deps", buildpath
-    
-    # Create symlink
+
     bin.install_symlink libexec/"bin/macmaint"
   end
 
   def caveats
     <<~EOS
-      To use MacMaint, you need to:
-      1. Run 'macmaint init' to set up your configuration
-      2. Provide your OpenAI API key when prompted
+      To get started with MacMaint:
+        1. Add your OpenAI API key to ~/.macmaint/.env:
+             OPENAI_API_KEY=sk-...
+        2. Run 'macmaint init' to set up your configuration (first-time setup)
+        3. Launch the interactive AI assistant:
+             macmaint start
 
-      Configuration will be stored in: ~/.macmaint/
+      Key commands inside the assistant:
+        help      — show available actions
+        status    — current session info
+        history   — recent conversation
+        exit      — quit the session
+
+      Configuration and session history are stored in: ~/.macmaint/
     EOS
   end
 
   test do
     assert_match "Usage:", shell_output("#{bin}/macmaint --help")
+    assert_match "start", shell_output("#{bin}/macmaint --help")
   end
 end
